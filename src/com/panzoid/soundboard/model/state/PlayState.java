@@ -2,11 +2,13 @@ package com.panzoid.soundboard.model.state;
 
 import android.util.Log;
 import android.media.AudioManager;
+import android.media.AudioTrack;
 import android.media.SoundPool;
 
 import com.panzoid.soundboard.R;
 import com.panzoid.soundboard.controller.MainActivity;
 import com.panzoid.soundboard.model.event.Event;
+import com.panzoid.soundboard.view.SoundButton;
 
 public class PlayState implements State {
 	
@@ -59,6 +61,22 @@ public class PlayState implements State {
 	@Override
 	public boolean onEnter() {
 		soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
+		
+		// Set buttons to green
+		MainActivity ma = MainActivity.getInstance();
+		SoundButton btn1 = (SoundButton)ma.findViewById(R.id.button1);
+		SoundButton btn2 = (SoundButton)ma.findViewById(R.id.button2);
+		SoundButton btn3 = (SoundButton)ma.findViewById(R.id.button3);
+		SoundButton btn4 = (SoundButton)ma.findViewById(R.id.button4);
+		btn1.setBGColor(0,255,0);
+		btn2.setBGColor(0,255,0);
+		btn3.setBGColor(0,255,0);
+		btn4.setBGColor(0,255,0);
+		Log.i("PlayState", "Setting background color for Playstate");
+		btn1.postInvalidate();
+		btn2.postInvalidate();
+		btn3.postInvalidate();
+		btn4.postInvalidate();
 
 		if (MainActivity.EMULATOR) {
 			soundIDs[0] = soundPool.load(MainActivity.getInstance(), R.raw.voice, 1);

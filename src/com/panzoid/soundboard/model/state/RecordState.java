@@ -9,6 +9,7 @@ import android.util.Log;
 import com.panzoid.soundboard.R;
 import com.panzoid.soundboard.controller.MainActivity;
 import com.panzoid.soundboard.model.event.Event;
+import com.panzoid.soundboard.view.SoundButton;
 
 public class RecordState implements State {
 	
@@ -67,6 +68,21 @@ public class RecordState implements State {
 	public boolean onEnter() {
 		isRecording = false;
 		mRecorder = new MediaRecorder();
+		
+		MainActivity ma = MainActivity.getInstance();
+		SoundButton btn1 = (SoundButton)ma.findViewById(R.id.button1);
+		SoundButton btn2 = (SoundButton)ma.findViewById(R.id.button2);
+		SoundButton btn3 = (SoundButton)ma.findViewById(R.id.button3);
+		SoundButton btn4 = (SoundButton)ma.findViewById(R.id.button4);
+		btn1.setBGColor(255,0,0);
+		btn2.setBGColor(255,0,0);
+		btn3.setBGColor(255,0,0);
+		btn4.setBGColor(255,0,0);
+		btn1.postInvalidate();
+		btn2.postInvalidate();
+		btn3.postInvalidate();
+		btn4.postInvalidate();
+		
 		return true;
 	}
 

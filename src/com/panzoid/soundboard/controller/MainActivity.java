@@ -7,6 +7,7 @@ import com.panzoid.soundboard.R;
 import com.panzoid.soundboard.R.layout;
 import com.panzoid.soundboard.model.event.Event;
 import com.panzoid.soundboard.model.state.StateMachine;
+import com.panzoid.soundboard.view.SoundButton;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -68,11 +69,12 @@ public class MainActivity extends Activity implements OnTouchListener{
 		});
 	}
 
+	@SuppressLint("ClickableViewAccessibility")
 	private void initButtons() {
-		((Button) findViewById(R.id.button1)).setOnTouchListener(this);
-		((Button) findViewById(R.id.button2)).setOnTouchListener(this);
-		((Button) findViewById(R.id.button3)).setOnTouchListener(this);
-		((Button) findViewById(R.id.button4)).setOnTouchListener(this);
+		((SoundButton) findViewById(R.id.button1)).setOnTouchListener(this);
+		((SoundButton) findViewById(R.id.button2)).setOnTouchListener(this);
+		((SoundButton) findViewById(R.id.button3)).setOnTouchListener(this);
+		((SoundButton) findViewById(R.id.button4)).setOnTouchListener(this);
 	}
 	
 	private void initAdView() {
