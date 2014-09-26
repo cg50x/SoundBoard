@@ -5,10 +5,13 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.graphics.RectF;
+import android.graphics.Shader;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.Button;
+import android.graphics.LinearGradient;
 
 public class SoundButton extends Button {
 	
@@ -16,17 +19,17 @@ public class SoundButton extends Button {
 	private Paint bgColor;
 	
 	// Foreground color
-	private Paint fgColor;
+	private Paint paint;
 	
 	// Dimensions
-	private RectF buttonDim;
+	private RectF canvasDim,
+				  meterDim,
+				  buttonDim;
+	private RectF BUTTON_MARGIN;
+	private LinearGradient lg;
 	
-	private RectF progressCircleDim;
-	
-	// Progress circle
-	private float sweepAngle;
-	
-	private boolean dimSaved;
+	// Progress
+	private float progress;
 
 	public SoundButton(Context context) {
 		super(context);
@@ -45,52 +48,56 @@ public class SoundButton extends Button {
 	
 	private void init() {
 		bgColor = new Paint();
-		fgColor = new Paint();
-		dimSaved = false;
+		paint = new Paint();
+		paint.setAntiAlias(true);
+		
+		canvasDim = new RectF();
+		meterDim = new RectF();
 		buttonDim = new RectF();
-		progressCircleDim = new RectF();
-		sweepAngle = 185f;
-		bgColor.setColor(Color.argb(255, 100, 100, 100));
-		fgColor.setColor(Color.argb(255,0,0,0));
-		fgColor.setAntiAlias(true);
+		BUTTON_MARGIN = new RectF(3,3,3,3);
+		progress = .5f;
+		
+		lg = new LinearGradient(0,0,100,100,Color.WHITE, Color.BLACK, Shader.TileMode.CLAMP);
 	}
 	
-	private void initButtonDimensions(float width, float height) {
-		buttonDim.set(0,0,
-					  width,
-					  height);
-		float diagonal = (float)Math.hypot(width / 2f, height / 2f);
-		progressCircleDim.set(0,0,width, height);
-		progressCircleDim.inset(-(diagonal-width/2f), -(diagonal-height/2f));
-		dimSaved = true;
+	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+		// get entire button+meter minus the margin
+		canvasDim.set(BUTTON_MARGIN.left,BUTTON_MARGIN.top,
+				w - BUTTON_MARGIN.right,h - BUTTON_MARGIN.bottom);
+		
+		// Calculate meter dimensions
+		meterDim.set(
+				canvasDim.left,
+				canvasDim.top,
+				canvasDim.right,
+				canvasDim.bottom * .1f
+				);
+		
+		// Calculate actual button dimensions
+		//buttonDim.set(src);
 	}
 	
 	public void onDraw(Canvas canvas) {
-		super.onDraw(canvas);
-
-		if (!dimSaved) {
-			initButtonDimensions(canvas.getWidth(), canvas.getHeight());
-		}
 		
-		// Direct all drawing operations to a separate buffer
-		// whose dimensions are restricted.
-		canvas.saveLayerAlpha(buttonDim, 100, Canvas.ALL_SAVE_FLAG);
+		// "Clear" canvas
+		canvas.drawColor(Color.TRANSPARENT);
 
-		// Draw background
-		canvas.drawColor(bgColor.getColor());
+		// Draw top meter
+		drawMeter(canvas);
 		
-		// Draw wedge
-		canvas.drawArc(progressCircleDim, 
-					   270f, 
-					   sweepAngle,
-					   true, 
-					   fgColor);
+		// Draw button itself
 		
 		// Draw small border
 		Log.i("SoundButton", "onDraw called");
-		
-		canvas.restore();
 
+	}
+	
+	private void drawMeter(Canvas canvas) {
+		paint.reset();
+		
+		paint.setStrokeWidth(3);
+		paint.setShader(lg);
+		canvas.drawLine(meterDim.left, meterDim.top, meterDim.right * progress, meterDim.bottom, paint);
 	}
 	
 	public int getBGColor() {
@@ -98,7 +105,7 @@ public class SoundButton extends Button {
 	}
 	
 	public int getFGColor() {
-		return fgColor.getColor();
+		return paint.getColor();
 	}
 	
 	public void setBGColor(int red, int green, int blue) {
@@ -110,7 +117,7 @@ public class SoundButton extends Button {
 	}
 	
 	public void setFGColor(int red, int green, int blue) {
-		fgColor.setColor(Color.argb(255,red, green, blue));
+		paint.setColor(Color.argb(255,red, green, blue));
 	}
 	
 	public void setFGColor(int color) {
@@ -118,14 +125,11 @@ public class SoundButton extends Button {
 	}
 	
 	public float getProgress() {
-		return sweepAngle / 360f;
+		return progress;
 	}
 	
 	public void setProgress(float percent) {
-		if (percent < 0)	percent = 0;
-		if (percent > 1)	percent = 1;
-		
-		sweepAngle = percent * 360f;
+		progress = percent;
 	}
 
 }
