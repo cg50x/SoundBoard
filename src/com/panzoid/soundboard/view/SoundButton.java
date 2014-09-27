@@ -70,34 +70,47 @@ public class SoundButton extends Button {
 				canvasDim.left,
 				canvasDim.top,
 				canvasDim.right,
-				canvasDim.bottom * .1f
+				canvasDim.bottom * .05f
 				);
 		
 		// Calculate actual button dimensions
-		//buttonDim.set(src);
+		buttonDim.set(
+				canvasDim.left,
+				meterDim.bottom,
+				canvasDim.right,
+				canvasDim.bottom);
 	}
 	
 	public void onDraw(Canvas canvas) {
 		
 		// "Clear" canvas
-		canvas.drawColor(Color.TRANSPARENT);
+		canvas.drawColor(Color.BLACK);
 
 		// Draw top meter
+		paint.reset();
 		drawMeter(canvas);
 		
 		// Draw button itself
+		paint.reset();
+		drawButton(canvas);
 		
 		// Draw small border
 		Log.i("SoundButton", "onDraw called");
 
 	}
 	
-	private void drawMeter(Canvas canvas) {
-		paint.reset();
-		
+	private void drawMeter(Canvas canvas) {		
 		paint.setStrokeWidth(3);
 		paint.setShader(lg);
-		canvas.drawLine(meterDim.left, meterDim.top, meterDim.right * progress, meterDim.bottom, paint);
+		canvas.drawRect(meterDim.left, meterDim.top, meterDim.right * progress, meterDim.bottom, paint);
+	}
+	
+	private void drawButton(Canvas canvas) {
+		paint.setColor(Color.BLUE);
+		canvas.drawRect(buttonDim.left, 
+				        buttonDim.top, 
+				        buttonDim.right, 
+				        buttonDim.bottom, paint);
 	}
 	
 	public int getBGColor() {
